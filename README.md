@@ -1,4 +1,4 @@
-# 🍽️ Hệ Thống Quản Lý Nhà Hàng (Restaurant Management System)
+# Hệ Thống Quản Lý Nhà Hàng (Restaurant Management System)
 
 Dự án phần mềm **Quản lý nhà hàng** được xây dựng bằng ngôn ngữ **Python**, giúp số hóa quy trình vận hành cơ bản tại quán ăn hoặc nhà hàng nhỏ như quản lý thực đơn, theo dõi bàn ăn, gọi món, tính tiền và báo cáo doanh thu.
 
