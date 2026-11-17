@@ -1,0 +1,16 @@
+# Môi trường ảo
+venv/
+.venv/
+env/
+
+# File biên dịch của Python
+__pycache__/
+*.py[cod]
+
+# Cấu hình trình soạn thảo
+.vscode/
+.idea/
+
+# File hệ điều hành
+.DS_Store
+Thumbs.db
