@@ -1,6 +1,31 @@
 """Tệp khởi chạy chính: giao diện dòng lệnh của hệ thống quản lý nhà hàng."""
 
 
+def format_money(amount):
+    """Định dạng số tiền VNĐ cho giao diện dòng lệnh."""
+    return "{:,.0f}đ".format(amount)
+
+
+def print_order(order):
+    """In hóa đơn chi tiết từ các giá trị đã được service tính."""
+    print("\n" + "=" * 60)
+    print("HÓA ĐƠN {} | Bàn {}".format(order.order_id, order.table_number))
+    print("Lập lúc: {}".format(order.created_at))
+    if order.paid_at:
+        print("Thanh toán: {}".format(order.paid_at))
+    print("-" * 60)
+    for item in order.items:
+        print("{} | {} | {} x {} = {}".format(
+            item.dish_id, item.dish_name, format_money(item.unit_price),
+            item.quantity, format_money(item.unit_price * item.quantity),
+        ))
+    print("-" * 60)
+    print("Tạm tính: {}".format(format_money(order.subtotal)))
+    print("Giảm giá: {}%".format(order.discount))
+    print("Tổng cộng: {}".format(format_money(order.total)))
+    print("=" * 60)
+
+
 # ---------- Màn hình con (các thành viên thay bằng code thật) ----------
 
 def show_menu_management():
