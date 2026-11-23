@@ -1,6 +1,6 @@
 """Tệp khởi chạy chính: giao diện dòng lệnh của hệ thống quản lý nhà hàng."""
 
-from services import order_service
+from services import menu_service, order_service
 
 
 # ---------- Tiện ích chung ----------
@@ -44,11 +44,122 @@ def print_tables():
     print("-" * 70)
 
 
-# ---------- Màn hình con (các thành viên thay bằng code thật) ----------
+# ---------- Quản lý thực đơn ----------
+
+def print_dishes(dishes):
+    """In danh sách món ra màn hình dạng bảng."""
+    if len(dishes) == 0:
+        print("(Chưa có món nào.)")
+        return
+
+    print("-" * 60)
+    print("{:<6} {:<24} {:<10} {:>10}  {}".format(
+        "Mã", "Tên món", "Nhóm", "Giá", "Trạng thái"
+    ))
+    print("-" * 60)
+    for dish in dishes:
+        status = "Đang bán" if dish.is_available else "Ngừng bán"
+        print("{:<6} {:<24} {:<10} {:>10}  {}".format(
+            dish.dish_id, dish.name, dish.category,
+            format_money(dish.price), status
+        ))
+    print("-" * 60)
+
+
+def choose_category():
+    """Cho người dùng chọn nhóm món."""
+    categories = menu_service.CATEGORIES
+    for index, category in enumerate(categories, start=1):
+        print("{}. {}".format(index, category))
+    number = input_int("Chọn nhóm món: ")
+
+    if 1 <= number <= len(categories):
+        return categories[number - 1]
+    print("Nhóm món không hợp lệ.")
+    return None
+
+
+def _view_dishes_by_category():
+    category = choose_category()
+    if category is not None:
+        print_dishes(menu_service.get_dishes_by_category(category))
+
+
+def _add_dish():
+    name = input("Tên món: ").strip()
+    category = choose_category()
+    if category is None:
+        return
+    price = input_int("Giá (VNĐ): ")
+    dish = menu_service.add_new_dish(name, category, price)
+    print("Đã thêm món {} - {} ({}).".format(
+        dish.dish_id, dish.name, format_money(dish.price)
+    ))
+
+
+def _update_price():
+    dish_id = input("Mã món cần sửa giá (vd M004): ")
+    dish = menu_service.find_dish_by_id(dish_id)
+    print("Món hiện tại: {} - giá {}".format(
+        dish.name, format_money(dish.price)
+    ))
+    new_price = input_int("Giá mới (VNĐ): ")
+    dish = menu_service.update_dish_price(dish_id, new_price)
+    print("Đã cập nhật giá {} thành {}.".format(
+        dish.name, format_money(dish.price)
+    ))
+
+
+def _change_availability():
+    dish_id = input("Mã món (vd M004): ")
+    dish = menu_service.find_dish_by_id(dish_id)
+    print("Món {} đang ở trạng thái: {}".format(
+        dish.name, "Đang bán" if dish.is_available else "Ngừng bán"
+    ))
+    print("1. Mở bán")
+    print("2. Ngừng bán")
+    choice = input("Chọn: ").strip()
+
+    if choice == "1":
+        menu_service.set_dish_availability(dish_id, True)
+        print("Đã mở bán món {}.".format(dish.name))
+    elif choice == "2":
+        menu_service.set_dish_availability(dish_id, False)
+        print("Đã ngừng bán món {}.".format(dish.name))
+    else:
+        print("Lựa chọn không hợp lệ.")
+
 
 def show_menu_management():
-    """Màn hình quản lý thực đơn — TV2 viết."""
-    print("Chức năng đang phát triển.")
+    """Màn hình quản lý thực đơn."""
+    while True:
+        print("\n--- QUẢN LÝ THỰC ĐƠN ---")
+        print("1. Xem toàn bộ thực đơn")
+        print("2. Xem theo nhóm món")
+        print("3. Thêm món mới")
+        print("4. Cập nhật giá món")
+        print("5. Ngừng bán / mở bán lại")
+        print("0. Quay lại")
+        choice = input("Chọn chức năng: ").strip()
+
+        if choice == "0":
+            break
+
+        try:
+            if choice == "1":
+                print_dishes(menu_service.get_all_dishes())
+            elif choice == "2":
+                _view_dishes_by_category()
+            elif choice == "3":
+                _add_dish()
+            elif choice == "4":
+                _update_price()
+            elif choice == "5":
+                _change_availability()
+            else:
+                print("Lựa chọn không hợp lệ.")
+        except ValueError as error:
+            print("Lỗi: {}".format(error))
 
 
 def show_table_management():
