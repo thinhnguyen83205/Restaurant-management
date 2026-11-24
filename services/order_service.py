@@ -286,6 +286,13 @@ def remove_item_from_order(table_number, dish_id, quantity):
     _validate_quantity(quantity)
     order = _get_open_order_or_raise(table_number)
 
+    # [SỬA LỖI #2] Thêm dòng chuẩn hóa mã món.
+    # Lý do: thêm món bằng "m004" vẫn được (find_dish_by_id tự đổi sang
+    # chữ hoa), nhưng bớt món bằng "m004" lại báo "không có trong hóa đơn"
+    # vì mã trong hóa đơn lưu là "M004". Đổi sang chữ hoa, bỏ khoảng trắng
+    # cho giống cách menu_service.find_dish_by_id() đang làm.
+    dish_id = str(dish_id).strip().upper()
+
     for item in order.items:
         if item.dish_id == dish_id:
             if quantity > item.quantity:

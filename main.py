@@ -2,20 +2,54 @@
 
 from datetime import datetime
 
+from models.table import STATUS_SERVING
 from services import menu_service, order_service, report_service
 
 
 # ---------- Tiện ích chung ----------
 
+# [SỬA LỖI #1] Thêm lớp lỗi riêng cho việc người dùng hủy nhập.
+# Lý do: trước đây hủy nhập (Ctrl+C / hết dữ liệu) bị đổi thành ValueError.
+# Các màn hình con bắt ValueError, in lỗi rồi lặp lại -> hỏi lại mãi,
+# chương trình kẹt trong vòng lặp vô hạn. Dùng lớp lỗi riêng (không phải
+# ValueError) thì màn hình con không bắt; lỗi đi thẳng lên main() và
+# chương trình thoát gọn gàng.
+class InputCancelled(Exception):
+    """Người dùng hủy nhập dữ liệu (Ctrl+C hoặc hết dữ liệu đầu vào)."""
+
+
+def input_text(prompt):
+    """
+    [SỬA LỖI #1] Hàm mới: đọc một chuỗi đã bỏ khoảng trắng hai đầu.
+    Dùng thay cho input() trực tiếp để Ctrl+C / EOF không làm chương
+    trình văng traceback; ném InputCancelled khi người dùng hủy nhập.
+    """
+    try:
+        return input(prompt).strip()
+    except (EOFError, KeyboardInterrupt):
+        raise InputCancelled()
+
+
 def input_int(prompt):
     """Đọc một số nguyên; ném ValueError nếu dữ liệu nhập không hợp lệ."""
+    # [SỬA LỖI #1] Code cũ (giữ lại để tham khảo):
+    # try:
+    #     # Bỏ khoảng trắng ở đầu/cuối rồi chuyển chuỗi người dùng nhập thành int.
+    #     value = int(input(prompt).strip())
+    #     return value
+    # except (EOFError, KeyboardInterrupt):
+    #     # Báo cho màn hình đang gọi biết người dùng đã hủy thao tác nhập.
+    #     raise ValueError("Đã hủy nhập dữ liệu.")
+    # except ValueError:
+    #     # Màn hình sẽ bắt lỗi này, báo cho người dùng và tiếp tục chạy.
+    #     raise ValueError("Vui lòng nhập số nguyên.")
+    #
+    # Sửa: đọc chuỗi qua input_text(); khi hủy nhập, input_text() ném
+    # InputCancelled thay vì ValueError, nên không còn kẹt vòng lặp.
+    # Ý nghĩa cũ giữ nguyên: nhập sai số vẫn báo "Vui lòng nhập số nguyên."
+    text = input_text(prompt)
     try:
-        # Bỏ khoảng trắng ở đầu/cuối rồi chuyển chuỗi người dùng nhập thành int.
-        value = int(input(prompt).strip())
-        return value
-    except (EOFError, KeyboardInterrupt):
-        # Báo cho màn hình đang gọi biết người dùng đã hủy thao tác nhập.
-        raise ValueError("Đã hủy nhập dữ liệu.")
+        return int(text)
     except ValueError:
         # Màn hình sẽ bắt lỗi này, báo cho người dùng và tiếp tục chạy.
         raise ValueError("Vui lòng nhập số nguyên.")
@@ -49,7 +83,14 @@ def print_order(order):
 
     print("-" * 60)
     print("Tạm tính: {}".format(format_money(order.subtotal)))
-    print("Giảm giá: {}%".format(order.discount))
+    # [SỬA LỖI #8] Code cũ:
+    # print("Giảm giá: {}%".format(order.discount))
+    # Lý do: hóa đơn mẫu trong README có in số tiền được giảm
+    # (vd "Giảm giá (10%): -14,500đ") nhưng code chỉ in phần trăm.
+    # Số tiền giảm = tạm tính - tổng cộng (đã do payment_service tính sẵn).
+    print("Giảm giá ({}%): -{}".format(
+        order.discount, format_money(order.subtotal - order.total)
+    ))
     print("Tổng cộng: {}".format(format_money(order.total)))
     print("=" * 60)
 
@@ -62,7 +103,12 @@ def print_tables():
     ))
     print("-" * 70)
     for table in order_service.get_all_tables():
-        if table.status == "serving":
+        # [SỬA QUY TẮC] Code cũ:
+        # if table.status == "serving":
+        # Lý do: CODING_RULES yêu cầu dùng hằng số, không viết thẳng chuỗi.
+        # Nếu sau này đổi giá trị trạng thái trong models/table.py thì
+        # chỗ này vẫn đúng.
+        if table.status == STATUS_SERVING:
             status = "Đang phục vụ"
         else:
             status = "Trống"
@@ -119,7 +165,9 @@ def _view_dishes_by_category():
 
 
 def _add_dish():
-    name = input("Tên món: ").strip()
+    # [SỬA LỖI #1] Code cũ: name = input("Tên món: ").strip()
+    # Lý do: input() trực tiếp làm chương trình văng lỗi khi bấm Ctrl+C.
+    name = input_text("Tên món: ")
     category = choose_category()
     if category is None:
         return
@@ -131,7 +179,9 @@ def _add_dish():
 
 
 def _update_price():
-    dish_id = input("Mã món cần sửa giá (vd M004): ")
+    # [SỬA LỖI #1] Code cũ: dish_id = input("Mã món cần sửa giá (vd M004): ")
+    # Lý do: input() trực tiếp làm chương trình văng lỗi khi bấm Ctrl+C.
+    dish_id = input_text("Mã món cần sửa giá (vd M004): ")
     dish = menu_service.find_dish_by_id(dish_id)
     print("Món hiện tại: {} - giá {}".format(
         dish.name, format_money(dish.price)
@@ -144,14 +194,18 @@ def _update_price():
 
 
 def _change_availability():
-    dish_id = input("Mã món (vd M004): ")
+    # [SỬA LỖI #1] Code cũ: dish_id = input("Mã món (vd M004): ")
+    # Lý do: input() trực tiếp làm chương trình văng lỗi khi bấm Ctrl+C.
+    dish_id = input_text("Mã món (vd M004): ")
     dish = menu_service.find_dish_by_id(dish_id)
     print("Món {} đang ở trạng thái: {}".format(
         dish.name, "Đang bán" if dish.is_available else "Ngừng bán"
     ))
     print("1. Mở bán")
     print("2. Ngừng bán")
-    choice = input("Chọn: ").strip()
+    # [SỬA LỖI #1] Code cũ: choice = input("Chọn: ").strip()
+    # Lý do: input() trực tiếp làm chương trình văng lỗi khi bấm Ctrl+C.
+    choice = input_text("Chọn: ")
 
     if choice == "1":
         menu_service.set_dish_availability(dish_id, True)
@@ -173,7 +227,10 @@ def show_menu_management():
         print("4. Cập nhật giá món")
         print("5. Ngừng bán / mở bán lại")
         print("0. Quay lại")
-        choice = input("Chọn chức năng: ").strip()
+        # [SỬA LỖI #1] Code cũ: choice = input("Chọn chức năng: ").strip()
+        # Lý do: đã chạy thử, hết dữ liệu nhập ở đây làm chương trình
+        # văng traceback EOFError.
+        choice = input_text("Chọn chức năng: ")
 
         if choice == "0":
             break
@@ -294,7 +351,10 @@ def show_order_management():
                 table_number = input_int("Nhập số bàn: ")
                 # In thực đơn để người dùng biết mã món trước khi nhập.
                 print_dishes(menu_service.get_all_dishes())
-                dish_id = input("Nhập mã món: ").strip()
+                # [SỬA LỖI #1] Code cũ:
+                # dish_id = input("Nhập mã món: ").strip()
+                # Lý do: input() trực tiếp văng lỗi khi bấm Ctrl+C.
+                dish_id = input_text("Nhập mã món: ")
                 quantity = input_int("Nhập số lượng: ")
                 # Service kiểm tra bàn, món và số lượng, rồi cập nhật tiền.
                 order = order_service.add_item_to_order(
@@ -303,7 +363,10 @@ def show_order_management():
                 print_order(order)
             elif choice == 3:
                 table_number = input_int("Nhập số bàn: ")
-                dish_id = input("Nhập mã món cần bớt: ").strip()
+                # [SỬA LỖI #1] Code cũ:
+                # dish_id = input("Nhập mã món cần bớt: ").strip()
+                # Lý do: input() trực tiếp văng lỗi khi bấm Ctrl+C.
+                dish_id = input_text("Nhập mã món cần bớt: ")
                 quantity = input_int("Nhập số lượng cần bớt: ")
                 # Service sẽ báo lỗi nếu món không có hoặc số lượng bớt quá lớn.
                 order = order_service.remove_item_from_order(
@@ -342,6 +405,9 @@ def show_reports():
         print("3. Tổng hợp doanh thu từng ngày")
         print("4. Top món bán chạy")
         print("5. Tổng doanh thu")
+        # [SỬA LỖI #3] Thêm mục 6: README có tính năng "Xem lại hóa đơn cũ"
+        # nhưng màn hình thống kê chưa có.
+        print("6. Xem lại hóa đơn cũ")
         print("0. Quay lại")
         choice = prompt_choice()
 
@@ -356,7 +422,10 @@ def show_reports():
                     today, format_money(revenue)
                 ))
             elif choice == "2":
-                date = input("Nhập ngày (YYYY-MM-DD): ").strip()
+                # [SỬA LỖI #1] Code cũ:
+                # date = input("Nhập ngày (YYYY-MM-DD): ").strip()
+                # Lý do: input() trực tiếp văng lỗi khi bấm Ctrl+C.
+                date = input_text("Nhập ngày (YYYY-MM-DD): ")
                 revenue = report_service.get_revenue_by_date(date)
                 print("Doanh thu ngày {}: {}".format(
                     date, format_money(revenue)
@@ -387,6 +456,13 @@ def show_reports():
             elif choice == "5":
                 revenue = report_service.get_total_revenue()
                 print("Tổng doanh thu: {}".format(format_money(revenue)))
+            # [SỬA LỖI #3] Thêm xử lý mục 6: nhập mã hóa đơn rồi in lại
+            # bằng print_order() có sẵn. Không thấy mã thì service ném
+            # ValueError, được except bên dưới in ra như các mục khác.
+            elif choice == "6":
+                order_id = input_text("Nhập mã hóa đơn (vd HD0001): ")
+                order = report_service.get_paid_order_by_id(order_id)
+                print_order(order)
             else:
                 print("Lựa chọn không hợp lệ.")
         except ValueError as error:
@@ -420,19 +496,41 @@ def main():
         print("0. Thoát")
         choice = prompt_choice()
 
-        if choice == "1":
-            show_menu_management()
-        elif choice == "2":
-            show_table_management()
-        elif choice == "3":
-            show_order_management()
-        elif choice == "4":
-            show_reports()
-        elif choice == "0":
-            print("Tạm biệt!")
+        # [SỬA LỖI #1] Code cũ (không có try/except):
+        # if choice == "1":
+        #     show_menu_management()
+        # elif choice == "2":
+        #     show_table_management()
+        # elif choice == "3":
+        #     show_order_management()
+        # elif choice == "4":
+        #     show_reports()
+        # elif choice == "0":
+        #     print("Tạm biệt!")
+        #     break
+        # else:
+        #     print("Lựa chọn không hợp lệ.")
+        #
+        # Sửa: bọc trong try. Khi người dùng hủy nhập ở bất kỳ màn hình con
+        # nào, InputCancelled bay lên đây, chương trình chào và thoát gọn
+        # thay vì văng traceback hoặc kẹt vòng lặp.
+        try:
+            if choice == "1":
+                show_menu_management()
+            elif choice == "2":
+                show_table_management()
+            elif choice == "3":
+                show_order_management()
+            elif choice == "4":
+                show_reports()
+            elif choice == "0":
+                print("Tạm biệt!")
+                break
+            else:
+                print("Lựa chọn không hợp lệ.")
+        except InputCancelled:
+            print("\nĐã hủy nhập dữ liệu. Tạm biệt!")
             break
-        else:
-            print("Lựa chọn không hợp lệ.")
 
 
 if __name__ == "__main__":

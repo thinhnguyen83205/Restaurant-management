@@ -68,5 +68,12 @@
         "category": "Đồ uống",
         "price": 20000,
         "is_available": true
+    },
+    {
+        "dish_id": "M011",
+        "name": "Cháo gà",
+        "category": "Món chính",
+        "price": 30000,
+        "is_available": true
     }
 ]
