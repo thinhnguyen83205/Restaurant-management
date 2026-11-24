@@ -92,3 +92,19 @@ def get_total_revenue():
     return sum(
         order.total for order in payment_service.load_paid_orders()
     )
+
+
+# [SỬA LỖI #3] Hàm mới: README có tính năng "Xem lại hóa đơn cũ" nhưng
+# chưa được làm. Hàm chỉ đọc lịch sử qua payment_service, không sửa gì.
+def get_paid_order_by_id(order_id):
+    """
+    Tìm một hóa đơn đã thanh toán theo mã (không phân biệt hoa/thường).
+    - order_id: mã hóa đơn, vd "HD0001"
+    - Trả về: Order tìm được
+    - Ném ValueError nếu không tìm thấy hoặc lịch sử không hợp lệ
+    """
+    wanted_id = str(order_id).strip().upper()
+    for order in payment_service.load_paid_orders():
+        if order.order_id == wanted_id:
+            return order
+    raise ValueError("Không tìm thấy hóa đơn có mã {}.".format(wanted_id))

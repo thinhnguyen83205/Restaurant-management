@@ -158,7 +158,7 @@ Restaurant-management/
 ├── requirements.txt           # Thư viện cần cài (hiện không có)
 ├── .gitignore                 # Bỏ qua venv/, __pycache__/ khi commit
 ├── CODING_RULES.md            # Quy tắc viết code
-├── TEAM_TASKS.md              # Phân công công việc nhóm
+├── TASK_ASSIGNMENT.md         # Phân công công việc nhóm
 └── README.md                  # Tài liệu này
 ```
 
@@ -269,7 +269,7 @@ Mỗi hóa đơn đã thanh toán gồm: `order_id` (dạng `HD0001`), `table_nu
 | Nguyễn Đại Ân | Thống kê, kiểm thử: `report_service.py` |
 | Nguyễn Quốc Huy | Thanh toán: `payment_service.py` |
 
-Phân công chi tiết và quy trình Git xem tại [`TEAM_TASKS.md`](TEAM_TASKS.md).
+Phân công chi tiết và quy trình Git xem tại [`TASK_ASSIGNMENT.md`](TASK_ASSIGNMENT.md).
 
 ### Đóng góp
 

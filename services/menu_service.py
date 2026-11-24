@@ -1,3 +1,6 @@
+"""Quản lý thực đơn: đọc/ghi menu.json, thêm món, sửa giá, ngừng bán."""
+# [SỬA QUY TẮC] Thêm docstring đầu tệp ở dòng trên (trước đây dòng 1 để
+# trống). CODING_RULES mục 5: mỗi tệp .py có docstring 1 dòng ở đầu tệp.
 
 import json
 import os
