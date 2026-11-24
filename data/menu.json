@@ -1,0 +1,72 @@
+[
+    {
+        "dish_id": "M001",
+        "name": "Gỏi cuốn",
+        "category": "Khai vị",
+        "price": 30000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M002",
+        "name": "Chả giò",
+        "category": "Khai vị",
+        "price": 35000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M003",
+        "name": "Salad trộn",
+        "category": "Khai vị",
+        "price": 40000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M004",
+        "name": "Phở bò tái",
+        "category": "Món chính",
+        "price": 65000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M005",
+        "name": "Cơm gà xối mỡ",
+        "category": "Món chính",
+        "price": 55000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M006",
+        "name": "Bún chả",
+        "category": "Món chính",
+        "price": 60000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M007",
+        "name": "Mì xào hải sản",
+        "category": "Món chính",
+        "price": 75000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M008",
+        "name": "Trà đá",
+        "category": "Đồ uống",
+        "price": 5000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M009",
+        "name": "Nước cam",
+        "category": "Đồ uống",
+        "price": 25000,
+        "is_available": true
+    },
+    {
+        "dish_id": "M010",
+        "name": "Cà phê sữa",
+        "category": "Đồ uống",
+        "price": 20000,
+        "is_available": true
+    }
+]
