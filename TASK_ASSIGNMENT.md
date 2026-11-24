@@ -30,10 +30,10 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `main.py` — chỉ hàm `main()`
 
 **Công việc:**
-- [ ] Viết các lớp `Dish`, `DiningTable`, `Order`, `OrderItem` (thuộc tính, `to_dict()`, `from_dict()`)
-- [ ] Viết hàm `main()`: menu chính nối 4 màn hình con
-- [ ] Tạo nhánh, mời thành viên, bật bảo vệ nhánh `main`
-- [ ] Review và merge Pull Request của các thành viên
+- [x] Viết các lớp `Dish`, `DiningTable`, `Order`, `OrderItem` (thuộc tính, `to_dict()`, `from_dict()`)
+- [x] Viết hàm `main()`: menu chính nối 4 màn hình con
+- [x] Tạo nhánh, mời thành viên, bật bảo vệ nhánh `main` *(nhánh và thành viên: đã có; bảo vệ nhánh `main`: cần tự kiểm tra lại trên GitHub)*
+- [x] Review và merge Pull Request của các thành viên *(đã merge PR #1 – #12)*
 
 ---
 
@@ -44,14 +44,14 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `data/menu.json`
 
 **Công việc:**
-- [ ] `load_menu()`, `save_menu()` — đọc/ghi `menu.json`
-- [ ] `find_dish_by_id()` — **làm đầu tiên**, TV4 cần dùng
-- [ ] `add_new_dish()` — thêm món
-- [ ] `update_dish_price()` — sửa giá
-- [ ] `set_dish_availability()` — ngừng / mở bán món
-- [ ] `get_all_dishes()`, `get_dishes_by_category()` — lọc theo nhóm
-- [ ] Nhập thực đơn mẫu vào `data/menu.json`
-- [ ] Trong `main.py`: `show_menu_management()`, `print_dishes()`, `choose_category()`
+- [x] `load_menu()`, `save_menu()` — đọc/ghi `menu.json`
+- [x] `find_dish_by_id()` — **làm đầu tiên**, TV4 cần dùng
+- [x] `add_new_dish()` — thêm món
+- [x] `update_dish_price()` — sửa giá
+- [x] `set_dish_availability()` — ngừng / mở bán món
+- [x] `get_all_dishes()`, `get_dishes_by_category()` — lọc theo nhóm
+- [x] Nhập thực đơn mẫu vào `data/menu.json`
+- [x] Trong `main.py`: `show_menu_management()`, `print_dishes()`, `choose_category()`
 
 ---
 
@@ -61,14 +61,14 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `services/order_service.py` — **chỉ phần `# ---------- Quản lý bàn ----------`**
 
 **Công việc:**
-- [ ] `get_all_tables()`, `get_table()` — lấy danh sách / một bàn
-- [ ] `get_open_order()` — lấy hóa đơn đang mở của bàn (TV4 dùng)
-- [ ] `generate_order_id()` — sinh mã hóa đơn `HD0001` (dùng `load_paid_orders()` của TV6)
-- [ ] `open_order()` — mở hóa đơn, chuyển bàn sang *Đang phục vụ*
-- [ ] `release_table()` — trả bàn về trạng thái trống
-- [ ] `transfer_table()` — chuyển bàn
-- [ ] `merge_tables()` — gộp bàn
-- [ ] Trong `main.py`: `show_table_management()`, `print_tables()`
+- [x] `get_all_tables()`, `get_table()` — lấy danh sách / một bàn
+- [x] `get_open_order()` — lấy hóa đơn đang mở của bàn (TV4 dùng)
+- [x] `generate_order_id()` — sinh mã hóa đơn `HD0001` (dùng `load_paid_orders()` của TV6)
+- [x] `open_order()` — mở hóa đơn, chuyển bàn sang *Đang phục vụ*
+- [x] `release_table()` — trả bàn về trạng thái trống
+- [x] `transfer_table()` — chuyển bàn
+- [x] `merge_tables()` — gộp bàn
+- [x] Trong `main.py`: `show_table_management()`, `print_tables()`
 
 ---
 
@@ -78,11 +78,11 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `services/order_service.py` — **chỉ phần `# ---------- Gọi món ----------` và `# ---------- Thanh toán theo bàn ----------`**
 
 **Công việc:**
-- [ ] `merge_item()` — cộng dồn số lượng nếu món đã có trong hóa đơn
-- [ ] `add_item_to_order()` — thêm món (dùng `find_dish_by_id()` của TV2)
-- [ ] `remove_item_from_order()` — bớt món, xóa dòng khi số lượng về 0
-- [ ] `apply_discount()`, `checkout()`, `cancel_order()` — hàm theo số bàn, gọi sang `payment_service` của TV6
-- [ ] Trong `main.py`: `show_order_management()` (màn hình chung, gọi hàm của TV3 và TV6), `input_int()`
+- [x] `merge_item()` — cộng dồn số lượng nếu món đã có trong hóa đơn
+- [x] `add_item_to_order()` — thêm món (dùng `find_dish_by_id()` của TV2)
+- [x] `remove_item_from_order()` — bớt món, xóa dòng khi số lượng về 0
+- [x] `apply_discount()`, `checkout()`, `cancel_order()` — hàm theo số bàn, gọi sang `payment_service` của TV6
+- [x] Trong `main.py`: `show_order_management()` (màn hình chung, gọi hàm của TV3 và TV6), `input_int()`
 
 ---
 
@@ -93,13 +93,13 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `README.md`
 
 **Công việc:**
-- [ ] `get_revenue_by_date()` — doanh thu theo ngày
-- [ ] `get_daily_revenue_summary()` — tổng hợp theo từng ngày
-- [ ] `get_best_selling_dishes()` — món bán chạy
-- [ ] `get_total_revenue()` — tổng doanh thu
-- [ ] Trong `main.py`: `show_reports()`
-- [ ] Viết kịch bản kiểm thử (mục 6) và chạy thử toàn bộ chương trình trước khi nộp
-- [ ] Cập nhật `README.md` khi có thay đổi
+- [x] `get_revenue_by_date()` — doanh thu theo ngày
+- [x] `get_daily_revenue_summary()` — tổng hợp theo từng ngày
+- [x] `get_best_selling_dishes()` — món bán chạy
+- [x] `get_total_revenue()` — tổng doanh thu
+- [x] Trong `main.py`: `show_reports()`
+- [x] Viết kịch bản kiểm thử (mục 6) và chạy thử toàn bộ chương trình trước khi nộp *(đã chạy 17/17 kịch bản đạt)*
+- [x] Cập nhật `README.md` khi có thay đổi
 
 ---
 
@@ -110,11 +110,11 @@ Tài liệu này chia công việc cho 6 thành viên, quy định thứ tự l�
 - `data/orders.json`
 
 **Công việc:**
-- [ ] `load_paid_orders()`, `save_paid_orders()` — đọc/ghi `orders.json` — **làm đầu tiên**, TV3 và TV5 cần dùng
-- [ ] `calculate_subtotal()`, `calculate_total()`, `recalculate_order()` — tính tiền
-- [ ] `set_order_discount()` — kiểm tra và áp dụng giảm giá theo %
-- [ ] `pay_order()` — chốt tiền, ghi thời điểm thanh toán, lưu lịch sử
-- [ ] Trong `main.py`: `print_order()`, `format_money()` — **làm sớm**, TV3, TV4, TV5 đều dùng để in
+- [x] `load_paid_orders()`, `save_paid_orders()` — đọc/ghi `orders.json` — **làm đầu tiên**, TV3 và TV5 cần dùng
+- [x] `calculate_subtotal()`, `calculate_total()`, `recalculate_order()` — tính tiền
+- [x] `set_order_discount()` — kiểm tra và áp dụng giảm giá theo %
+- [x] `pay_order()` — chốt tiền, ghi thời điểm thanh toán, lưu lịch sử
+- [x] Trong `main.py`: `print_order()`, `format_money()` — **làm sớm**, TV3, TV4, TV5 đều dùng để in
 
 > `payment_service.py` **không** được import `order_service` để tránh lỗi import vòng.
 
@@ -179,13 +179,13 @@ git push -u origin feature/menu
 
 ### Checklist review Pull Request (nhóm trưởng)
 
-- [ ] Chạy `python main.py` không lỗi
-- [ ] Không có `print()` / `input()` trong `services/`
-- [ ] Lỗi được báo bằng `raise ValueError(...)`
-- [ ] Tên biến, hàm theo `snake_case`; lớp theo `PascalCase`
-- [ ] Hàm trong `services/` có docstring
-- [ ] Chỉ sửa trong file / khu vực được phân công
-- [ ] Không commit `venv/`, `__pycache__/`
+- [x] Chạy `python main.py` không lỗi
+- [x] Không có `print()` / `input()` trong `services/`
+- [x] Lỗi được báo bằng `raise ValueError(...)`
+- [x] Tên biến, hàm theo `snake_case`; lớp theo `PascalCase`
+- [x] Hàm trong `services/` có docstring
+- [x] Chỉ sửa trong file / khu vực được phân công
+- [x] Không commit `venv/`, `__pycache__/`
 
 ---
 
@@ -202,23 +202,23 @@ git push -u origin feature/menu
 
 | # | Chức năng | Thao tác | Kết quả mong đợi | Đạt |
 |---|---|---|---|---|
-| 1 | Thực đơn | Thêm món "Bánh flan", nhóm Khai vị, giá 20000 | Món mới có mã `M011` | [] |
-| 2 | Thực đơn | Thêm món với giá `-5000` hoặc `abc` | Báo lỗi, chương trình không dừng | [] |
-| 3 | Thực đơn | Ngừng bán `M004` rồi gọi món `M004` | Báo "đã ngừng phục vụ" | [] |
-| 4 | Bàn | Mở hóa đơn bàn 1 | Bàn 1 chuyển *Đang phục vụ* | [] |
-| 5 | Bàn | Mở hóa đơn bàn 1 lần nữa | Báo "Bàn 1 đang phục vụ" | [] |
-| 6 | Bàn | Nhập bàn số 99 | Báo số bàn không hợp lệ | [] |
-| 7 | Bàn | Chuyển bàn 1 → bàn 5 | Bàn 1 trống, bàn 5 đang phục vụ | [] |
-| 8 | Bàn | Gộp bàn 2 vào bàn 5 | Món cộng dồn, bàn 2 trống | [] |
-| 9 | Gọi món | Gọi `M004` x2, gọi thêm `M004` x1 | Một dòng `M004` số lượng 3 | [] |
-| 10 | Gọi món | Bớt món đến số lượng 0 | Dòng món bị xóa khỏi hóa đơn | [] |
-| 11 | Thanh toán | Giảm giá 10% cho hóa đơn 145,000đ | Tổng cộng 130,500đ | [] |
-| 12 | Thanh toán | Giảm giá 150% | Báo lỗi 0 – 100% | [] |
-| 13 | Thanh toán | Thanh toán hóa đơn chưa có món | Báo không thể thanh toán | [] |
-| 14 | Thanh toán | Thanh toán bình thường | In hóa đơn, lưu vào `orders.json`, bàn trở về trống | [] |
-| 15 | Thống kê | Xem doanh thu hôm nay sau bước 14 | Đúng số hóa đơn và tổng tiền | [] |
-| 16 | Thống kê | Xem món bán chạy | Sắp xếp theo số lượng giảm dần | [] |
-| 17 | Thống kê | Tắt và mở lại chương trình, xem lịch sử | Hóa đơn cũ vẫn còn | [] |
+| 1 | Thực đơn | Thêm món "Bánh flan", nhóm Khai vị, giá 20000 | Món mới có mã `M011` | [x] |
+| 2 | Thực đơn | Thêm món với giá `-5000` hoặc `abc` | Báo lỗi, chương trình không dừng | [x] |
+| 3 | Thực đơn | Ngừng bán `M004` rồi gọi món `M004` | Báo "đã ngừng phục vụ" | [x] |
+| 4 | Bàn | Mở hóa đơn bàn 1 | Bàn 1 chuyển *Đang phục vụ* | [x] |
+| 5 | Bàn | Mở hóa đơn bàn 1 lần nữa | Báo "Bàn 1 đang phục vụ" | [x] |
+| 6 | Bàn | Nhập bàn số 99 | Báo số bàn không hợp lệ | [x] |
+| 7 | Bàn | Chuyển bàn 1 → bàn 5 | Bàn 1 trống, bàn 5 đang phục vụ | [x] |
+| 8 | Bàn | Gộp bàn 2 vào bàn 5 | Món cộng dồn, bàn 2 trống | [x] |
+| 9 | Gọi món | Gọi `M004` x2, gọi thêm `M004` x1 | Một dòng `M004` số lượng 3 | [x] |
+| 10 | Gọi món | Bớt món đến số lượng 0 | Dòng món bị xóa khỏi hóa đơn | [x] |
+| 11 | Thanh toán | Giảm giá 10% cho hóa đơn 145,000đ | Tổng cộng 130,500đ | [x] |
+| 12 | Thanh toán | Giảm giá 150% | Báo lỗi 0 – 100% | [x] |
+| 13 | Thanh toán | Thanh toán hóa đơn chưa có món | Báo không thể thanh toán | [x] |
+| 14 | Thanh toán | Thanh toán bình thường | In hóa đơn, lưu vào `orders.json`, bàn trở về trống | [x] |
+| 15 | Thống kê | Xem doanh thu hôm nay sau bước 14 | Đúng số hóa đơn và tổng tiền | [x] |
+| 16 | Thống kê | Xem món bán chạy | Sắp xếp theo số lượng giảm dần | [x] |
+| 17 | Thống kê | Tắt và mở lại chương trình, xem lịch sử | Hóa đơn cũ vẫn còn | [x] |
 
 ---
 
@@ -226,11 +226,11 @@ git push -u origin feature/menu
 
 | Thành viên | Phần việc | Trạng thái | Hạn | Ghi chú |
 |---|---|---|---|---|
-| Nhóm trưởng | `models/`, `main()`, Git | .... | | |
-| TV2 | Thực đơn | cl | | |
-| TV3 | Bàn ăn | cl | | |
-| TV4 | Gọi món | cl | | |
-| TV5 | Thống kê, kiểm thử, tài liệu | cl | | |
-| TV6 | Thanh toán | cl | | |
+| Nhóm trưởng | `models/`, `main()`, Git | done | | |
+| TV2 | Thực đơn | done | | |
+| TV3 | Bàn ăn | done | | |
+| TV4 | Gọi món | done | | |
+| TV5 | Thống kê, kiểm thử, tài liệu | done | | |
+| TV6 | Thanh toán | done | | |
 
 *Trạng thái:* cl: Chưa làm · dl: Đang làm · rv Chờ review · done:Đã merge
