@@ -21,6 +21,34 @@ def format_money(amount):
     return "{:,.0f}đ".format(amount).replace(",", ".")
 
 
+def print_order(order):
+    """In các món và tổng tiền của một hóa đơn."""
+    print("\n" + "=" * 60)
+    print("HÓA ĐƠN {} | Bàn {}".format(
+        order.order_id, order.table_number
+    ))
+    print("Lập lúc: {}".format(order.created_at))
+    if order.paid_at is not None:
+        print("Thanh toán: {}".format(order.paid_at))
+
+    print("-" * 60)
+    for item in order.items:
+        item_total = item.unit_price * item.quantity
+        print("{} | {} | {} x {} = {}".format(
+            item.dish_id,
+            item.dish_name,
+            format_money(item.unit_price),
+            item.quantity,
+            format_money(item_total),
+        ))
+
+    print("-" * 60)
+    print("Tạm tính: {}".format(format_money(order.subtotal)))
+    print("Giảm giá: {}%".format(order.discount))
+    print("Tổng cộng: {}".format(format_money(order.total)))
+    print("=" * 60)
+
+
 def print_tables():
     """In danh sách 10 bàn cùng trạng thái và tạm tính."""
     print("\n" + "-" * 70)
@@ -216,7 +244,62 @@ def show_table_management():
 
 def show_order_management():
     """Màn hình gọi món & thanh toán — TV4 viết."""
-    print("Chức năng đang phát triển.")
+    while True:
+        print("\n--- GỌI MÓN & THANH TOÁN ---")
+        print("1. Mở hóa đơn")
+        print("2. Thêm món")
+        print("3. Bớt món")
+        print("4. Hủy hóa đơn")
+        print("5. Giảm giá")
+        print("6. Thanh toán")
+        print("0. Quay lại")
+
+        try:
+            choice = input_int("Chọn chức năng: ")
+            if choice == 0:
+                break
+            if choice not in (1, 2, 3, 4, 5, 6):
+                print("Lựa chọn không hợp lệ.")
+                continue
+
+            if choice == 1:
+                table_number = input_int("Nhập số bàn: ")
+                order = order_service.open_order(table_number)
+                print("Đã mở hóa đơn {}.".format(order.order_id))
+            elif choice == 2:
+                table_number = input_int("Nhập số bàn: ")
+                print_dishes(menu_service.get_all_dishes())
+                dish_id = input("Nhập mã món: ").strip()
+                quantity = input_int("Nhập số lượng: ")
+                order = order_service.add_item_to_order(
+                    table_number, dish_id, quantity
+                )
+                print_order(order)
+            elif choice == 3:
+                table_number = input_int("Nhập số bàn: ")
+                dish_id = input("Nhập mã món cần bớt: ").strip()
+                quantity = input_int("Nhập số lượng cần bớt: ")
+                order = order_service.remove_item_from_order(
+                    table_number, dish_id, quantity
+                )
+                print_order(order)
+            elif choice == 4:
+                table_number = input_int("Nhập số bàn: ")
+                order_service.cancel_order(table_number)
+                print("Đã hủy hóa đơn bàn {}.".format(table_number))
+            elif choice == 5:
+                table_number = input_int("Nhập số bàn: ")
+                discount = input_int("Nhập phần trăm giảm giá: ")
+                order = order_service.apply_discount(
+                    table_number, discount
+                )
+                print_order(order)
+            else:
+                table_number = input_int("Nhập số bàn: ")
+                order = order_service.checkout(table_number)
+                print_order(order)
+        except ValueError as error:
+            print("Lỗi: {}".format(error))
 
 
 def show_reports():
