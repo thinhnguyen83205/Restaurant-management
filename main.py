@@ -1,6 +1,8 @@
 """Tệp khởi chạy chính: giao diện dòng lệnh của hệ thống quản lý nhà hàng."""
 
-from services import menu_service, order_service
+from datetime import datetime
+
+from services import menu_service, order_service, report_service
 
 
 # ---------- Tiện ích chung ----------
@@ -332,8 +334,63 @@ def show_order_management():
 
 
 def show_reports():
-    """Màn hình thống kê doanh thu — TV5 viết."""
-    print("Chức năng đang phát triển.")
+    """Hiển thị các báo cáo doanh thu và món bán chạy."""
+    while True:
+        print("\n--- Thống kê doanh thu ---")
+        print("1. Doanh thu hôm nay")
+        print("2. Doanh thu theo ngày")
+        print("3. Tổng hợp doanh thu từng ngày")
+        print("4. Top món bán chạy")
+        print("5. Tổng doanh thu")
+        print("0. Quay lại")
+        choice = prompt_choice()
+
+        if choice == "0":
+            return
+
+        try:
+            if choice == "1":
+                today = datetime.now().strftime("%Y-%m-%d")
+                revenue = report_service.get_revenue_by_date(today)
+                print("Doanh thu ngày {}: {}".format(
+                    today, format_money(revenue)
+                ))
+            elif choice == "2":
+                date = input("Nhập ngày (YYYY-MM-DD): ").strip()
+                revenue = report_service.get_revenue_by_date(date)
+                print("Doanh thu ngày {}: {}".format(
+                    date, format_money(revenue)
+                ))
+            elif choice == "3":
+                summary = report_service.get_daily_revenue_summary()
+                if not summary:
+                    print("Chưa có dữ liệu doanh thu.")
+                else:
+                    print("\nDoanh thu theo ngày:")
+                    for date, revenue in summary.items():
+                        print("{}: {}".format(date, format_money(revenue)))
+            elif choice == "4":
+                dishes = report_service.get_best_selling_dishes()
+                if not dishes:
+                    print("Chưa có dữ liệu món đã bán.")
+                else:
+                    print("\nTop món bán chạy:")
+                    for rank, dish in enumerate(dishes, start=1):
+                        print(
+                            "{}. {} - {} ({} phần)".format(
+                                rank,
+                                dish["dish_name"],
+                                dish["dish_id"],
+                                dish["quantity"],
+                            )
+                        )
+            elif choice == "5":
+                revenue = report_service.get_total_revenue()
+                print("Tổng doanh thu: {}".format(format_money(revenue)))
+            else:
+                print("Lựa chọn không hợp lệ.")
+        except ValueError as error:
+            print("Lỗi: {}".format(error))
 
 
 # ---------- Menu chính (nhóm trưởng) ----------
