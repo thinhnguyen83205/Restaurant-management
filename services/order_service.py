@@ -2,9 +2,9 @@
 
 from datetime import datetime
 
-from models.order import Order
+from models.order import Order, OrderItem
 from models.table import DiningTable, STATUS_EMPTY, STATUS_SERVING
-from services import payment_service
+from services import menu_service, payment_service
 
 
 MAX_TABLES = 10
@@ -205,3 +205,137 @@ def merge_tables(source_table_number, destination_table_number):
         destination_order.total = destination_order.subtotal
 
     return destination_order
+
+
+# ---------- Gọi món ----------
+
+def _validate_quantity(quantity):
+    """Đảm bảo số lượng món là số nguyên dương."""
+    # bool là kiểu con của int trong Python nên cần loại riêng.
+    if (not isinstance(quantity, int) or isinstance(quantity, bool)
+            or quantity <= 0):
+        raise ValueError("Số lượng phải là số nguyên lớn hơn 0.")
+
+
+def _get_open_order_or_raise(table_number):
+    """Lấy hóa đơn đang mở hoặc báo lỗi nếu bàn chưa có hóa đơn."""
+    order = get_open_order(table_number)
+    if order is None:
+        raise ValueError(
+            "Bàn {} chưa có hóa đơn đang mở.".format(table_number)
+        )
+    return order
+
+
+def merge_item(order, dish, quantity):
+    """
+    Thêm món vào hóa đơn hoặc cộng dồn số lượng món đã có.
+    - order: hóa đơn cần cập nhật
+    - dish: món ăn cần thêm
+    - quantity: số lượng cần thêm
+    - Trả về: dòng món vừa thêm hoặc cập nhật
+    - Ném ValueError nếu số lượng không hợp lệ
+    """
+    _validate_quantity(quantity)
+
+    for item in order.items:
+        if item.dish_id == dish.dish_id:
+            item.quantity += quantity
+            return item
+
+    # Lưu tên và giá hiện tại để hóa đơn không đổi theo thực đơn sau này.
+    item = OrderItem(
+        dish_id=dish.dish_id,
+        dish_name=dish.name,
+        unit_price=dish.price,
+        quantity=quantity,
+    )
+    order.items.append(item)
+    return item
+
+
+def add_item_to_order(table_number, dish_id, quantity):
+    """
+    Thêm món đang bán vào hóa đơn của bàn.
+    - table_number: số bàn đang phục vụ
+    - dish_id: mã món cần thêm
+    - quantity: số lượng cần thêm
+    - Trả về: hóa đơn sau khi cập nhật
+    - Ném ValueError nếu bàn, món hoặc số lượng không hợp lệ
+    """
+    _validate_quantity(quantity)
+    order = _get_open_order_or_raise(table_number)
+    dish = menu_service.find_dish_by_id(dish_id)
+
+    if not dish.is_available:
+        raise ValueError("Món {} đã ngừng phục vụ.".format(dish_id))
+
+    merge_item(order, dish, quantity)
+    return payment_service.recalculate_order(order)
+
+
+def remove_item_from_order(table_number, dish_id, quantity):
+    """
+    Bớt món khỏi hóa đơn; xóa dòng nếu số lượng còn bằng 0.
+    - table_number: số bàn đang phục vụ
+    - dish_id: mã món cần bớt
+    - quantity: số lượng cần bớt
+    - Trả về: hóa đơn sau khi cập nhật
+    - Ném ValueError nếu bàn, món hoặc số lượng không hợp lệ
+    """
+    _validate_quantity(quantity)
+    order = _get_open_order_or_raise(table_number)
+
+    for item in order.items:
+        if item.dish_id == dish_id:
+            if quantity > item.quantity:
+                raise ValueError("Số lượng món trong hóa đơn không đủ.")
+
+            item.quantity -= quantity
+            if item.quantity == 0:
+                order.items.remove(item)
+
+            return payment_service.recalculate_order(order)
+
+    raise ValueError("Món {} không có trong hóa đơn.".format(dish_id))
+
+
+# ---------- Thanh toán theo bàn ----------
+
+def apply_discount(table_number, discount):
+    """
+    Áp dụng mức giảm giá cho hóa đơn của bàn.
+    - table_number: số bàn đang phục vụ
+    - discount: phần trăm giảm giá từ 0 đến 100
+    - Trả về: hóa đơn sau khi tính lại tiền
+    - Ném ValueError nếu không có hóa đơn hoặc mức giảm sai
+    """
+    order = _get_open_order_or_raise(table_number)
+    return payment_service.set_order_discount(order, discount)
+
+
+def checkout(table_number):
+    """
+    Thanh toán hóa đơn rồi trả bàn về trạng thái trống.
+    - table_number: số bàn cần thanh toán
+    - Trả về: hóa đơn đã thanh toán
+    - Ném ValueError nếu không có hóa đơn hoặc không thể thanh toán
+    """
+    order = _get_open_order_or_raise(table_number)
+
+    # Chỉ trả bàn sau khi lưu hóa đơn thanh toán thành công.
+    paid_order = payment_service.pay_order(order)
+    release_table(table_number)
+    return paid_order
+
+
+def cancel_order(table_number):
+    """
+    Hủy hóa đơn chưa thanh toán và trả bàn về trạng thái trống.
+    - table_number: số bàn cần hủy hóa đơn
+    - Trả về: hóa đơn đã hủy
+    - Ném ValueError nếu bàn chưa có hóa đơn đang mở
+    """
+    order = _get_open_order_or_raise(table_number)
+    release_table(table_number)
+    return order
